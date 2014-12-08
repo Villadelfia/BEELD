@@ -183,7 +183,6 @@ function loadImageItem_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-
 % --------------------------------------------------------------------
 function saveImageItem_Callback(hObject, eventdata, handles)
 % hObject    handle to saveImageItem (see GCBO)
@@ -192,32 +191,3 @@ function saveImageItem_Callback(hObject, eventdata, handles)
 
 % ====================================================================
 
-function out = denoise(img, rr, rs, mask)
-    r = img(rr)
-    s = img(rs)
-    
-    binarymask = mask > 0.5
-    
-    R = fft2(r));
-    S = fft2(s));
-    
-    rsize = size(R)
-    
-    Ms = zeroes(rsize)
-    
-    for u = 1:rsize(1)
-        for v = 1:rsize(2)
-            Ms(u,v) = min(abs(R(u,v)), abs(S(u,v)))
-        end
-    end
-    
-    Ms(1,1) = R(1,1)
-    
-    out = ifft2(M.*e^(i*angle(R)))
-    
-    out = real(out)
-    out = min(out, 1.0)
-    out = max(out, 0.0)
-    
-    out = out.*(1-mask) + img.*mask;
-end

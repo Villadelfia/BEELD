@@ -45,5 +45,6 @@ function [ out ] = denoisesf(img, rx, ry, sx, sy, mask)
     out = zeros(size(img));
     out(rx, ry) = t;
     
-    out = out.*(1-mask) + img.*mask;
+    out = img;
+    out(rx, ry) = t.*(1-mask(rx,ry)) + img(rx,ry).*mask(rx,ry);
 end

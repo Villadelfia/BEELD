@@ -24,10 +24,8 @@ function [ out ] = denoise(img, rx, ry, sx, sy, mask)
     t = min(t, 1.0);
     t = max(t, 0.0);
     
-    out = zeros(size(img));
-    out(rx, ry) = t;
-    
-    out = out.*(1-mask) + img.*mask;
+    out = img;
+    out(rx, ry) = t.*(1-mask(rx,ry)) + img(rx,ry).*mask(rx,ry);
 
 end
 

@@ -22,7 +22,7 @@ function varargout = Project(varargin)
 
 % Edit the above text to modify the response to help Project
 
-% Last Modified by GUIDE v2.5 18-Dec-2014 12:23:16
+% Last Modified by GUIDE v2.5 18-Dec-2014 14:26:38
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -84,7 +84,7 @@ if canceled
 end
 handles.mask = imread(filename);
 handles.mask = im2double(handles.mask);
-handles.img = handles.mask .* handles.img;
+handles.img = double(handles.mask>0.5) .* handles.img;
 imshow(handles.img);
 set(handles.drawNoiseMaskButton,'BackgroundColor','green');
 set(handles.markRepairButton,'enable','on');
@@ -112,6 +112,7 @@ handles.sample = getrect(handles.image);
 handles.sample = int64(handles.sample);
 set(handles.markSampleButton,'BackgroundColor','green');
 set(handles.runButton,'enable','on');
+set(handles.run3Button,'enable','on');
 guidata(hObject, handles);
 
 
@@ -236,3 +237,17 @@ end
 imwrite(img, filename);
 guidata(hObject, handles);
 % ====================================================================
+
+
+% --- Executes on button press in run3Button.
+function run3Button_Callback(hObject, eventdata, handles)
+% hObject    handle to run3Button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+rx = [handles.repair(1):handles.repair(1)+handles.repair(3)];
+ry = [handles.repair(2):handles.repair(2)+handles.repair(4)];
+sx = [handles.sample(1):handles.sample(1)+handles.repair(3)];
+sy = [handles.sample(2):handles.sample(2)+handles.repair(4)];
+handles.img = denoisesf3(handles.img, ry, rx, sy, sx, handles.mask(:,:,1));
+imshow(handles.img);
+guidata(hObject, handles);

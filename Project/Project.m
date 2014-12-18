@@ -22,7 +22,7 @@ function varargout = Project(varargin)
 
 % Edit the above text to modify the response to help Project
 
-% Last Modified by GUIDE v2.5 04-Dec-2014 13:39:21
+% Last Modified by GUIDE v2.5 18-Dec-2014 12:23:16
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -78,6 +78,17 @@ function drawNoiseMaskButton_Callback(hObject, eventdata, handles)
 % hObject    handle to drawNoiseMaskButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[filename,canceled]=imgetfile();
+if canceled
+    return;
+end
+handles.mask = imread(filename);
+handles.mask = im2double(handles.mask);
+handles.img = handles.mask .* handles.img;
+imshow(handles.img);
+set(handles.drawNoiseMaskButton,'BackgroundColor','green');
+set(handles.markRepairButton,'enable','on');
+guidata(hObject, handles);
 
 
 % --- Executes on button press in markRepairButton.
@@ -85,6 +96,11 @@ function markRepairButton_Callback(hObject, eventdata, handles)
 % hObject    handle to markRepairButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+handles.repair = getrect(handles.image);
+handles.repair = int64(handles.repair);
+set(handles.markRepairButton,'BackgroundColor','green');
+set(handles.markSampleButton,'enable','on');
+guidata(hObject, handles);
 
 
 % --- Executes on button press in markSampleButton.
@@ -92,6 +108,11 @@ function markSampleButton_Callback(hObject, eventdata, handles)
 % hObject    handle to markSampleButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+handles.sample = getrect(handles.image);
+handles.sample = int64(handles.sample);
+set(handles.markSampleButton,'BackgroundColor','green');
+set(handles.runButton,'enable','on');
+guidata(hObject, handles);
 
 
 
@@ -168,6 +189,13 @@ function runButton_Callback(hObject, eventdata, handles)
 % hObject    handle to runButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+rx = [handles.repair(1):handles.repair(1)+handles.repair(3)];
+ry = [handles.repair(2):handles.repair(2)+handles.repair(4)];
+sx = [handles.sample(1):handles.sample(1)+handles.repair(3)];
+sy = [handles.sample(2):handles.sample(2)+handles.repair(4)];
+handles.img = denoise3(handles.img, ry, rx, sy, sx, handles.mask(:,:,1));
+imshow(handles.img);
+guidata(hObject, handles);
 
 
 % --------------------------------------------------------------------
@@ -182,12 +210,29 @@ function loadImageItem_Callback(hObject, eventdata, handles)
 % hObject    handle to loadImageItem (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[filename,canceled]=imgetfile();
+if canceled
+    return;
+end
+handles.img = imread(filename);
+handles.img = im2double(handles.img);
+imshow(handles.img);
+set(handles.drawNoiseMaskButton,'enable','on');
+guidata(hObject, handles);
 
 % --------------------------------------------------------------------
 function saveImageItem_Callback(hObject, eventdata, handles)
 % hObject    handle to saveImageItem (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+[filename, ext, canceled] = imputfile();
+if canceled
+    return;
+end
+[img, flag] = getimage(handles.image);
+if flag == 0
+    return;
+end
+imwrite(img, filename);
+guidata(hObject, handles);
 % ====================================================================
-

@@ -36,7 +36,8 @@ function [ out ] = denoisesf(img, rx, ry, sx, sy, mask)
     
     T = Ms.*exp(1i*angle(R));
     t = ifft2(T);
-    t = t.*(1-mask(rx,ry)) + img(rx,ry).*mask(rx,ry);
+    t = t.*(1-double(mask(rx,ry) > 0.5)) + ...
+            img(rx,ry).*double(mask(rx,ry) > 0.5);
     t = t + rl;
     t = real(t);
     t = min(t, 1.0);

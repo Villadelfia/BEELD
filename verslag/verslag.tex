@@ -1,0 +1,112 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[dutch]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[dutch]{isodate}
+\usepackage{parskip}
+\usepackage{todonotes}
+
+\begin{document}
+
+\title{Beeldverwerking: Practicum noise removal}
+\author{Frank Erens \and Randy Thiemann}
+\date{\isodate\today}
+\maketitle
+
+\section{Inleiding}
+
+\todo{inleiding}
+
+\section{Inhoud archief}
+
+Het ingestuurde archief bevat, naast dit verslag, alle broncode die nodig is om
+het project in MatLab te draaien. 
+
+In de map \texttt{examples/} zijn een aantal voorbeeldafbeeldingen te vinden
+waar het programma op kan getest worden. Voor iedere afbeelding zijn er ook
+twee maskers beschikbaar, \'e\'en binair (\texttt{\_mask}) \'e\'en zacht 
+(\texttt{\_maskf}), als ook een voorbeeld van de uitvoer na het algoritme 20
+keer gedraaid te hebben (\texttt{\_out}).
+
+\section{Ge\"implementeerde functionaliteit}
+
+Het programma laat toe om krassen op afbeeldingen te verwijderen via een
+algoritme zoals beschreven in de paper van Hirani et al., 1996. In de paper
+worden drie varianten van het algoritme beschreven, gelabeld A1 tot A3. 
+
+\todo{}
+XXXX Alle drie geimplementeerd XXXX
+
+\todo{}
+XXXX grafische interface voorzien, die toelaat om een afbeelding te selecteren
+en de nodige parameters in te stellen.
+
+\section{Gebruik}
+
+Om het programma te starten, open MatLab en navigeer naar de map van het
+project en typ vervolgens \texttt{Project} in het commandovenster.
+
+Dit start de grafische interface. Deze bestaat uit een gebied waar de
+afbeelding weergegeven wordt, als ook een aantal knoppen om het algoritme te
+bedienen.
+
+Als eerste stap dient er een afbeelding geladen te worden 
+(\textbf{File} $\to$ \textbf{Load Image}). Deze afbeelding wordt dan
+weergegeven in het veld.
+
+Nadat de afbeelding is ingeladen, kan het algoritme geconfigureerd worden met
+behulp van een aantal knoppen aan de linkerkant. Deze knoppen dienen in
+volgorde afgelopen te worden. Wanneer een stap klaar is, zal de knop groen
+oplichten. Tijdens het proces kan ten allen tijden een stap opnieuw worden
+uitgevoerd, maar dan dienen alle daaropvolgende stappen ook opnieuw uitgevoerd
+te worden.
+
+De eerste parameter voor het algoritme is een masker. Dit is een afbeelding die
+even groot is als de oorspronkelijke afbeelding, die wit is, met het gebied van
+de kras zwart gemarkeerd. Het is ook mogelijk om een masker te gebruiken met
+zachte randen hier. Dit masker dient op voorhand gemaakt te worden in een
+extern programma, bijvoorbeeld Photoshop.
+
+Om het masker in te laden, klik \textbf{Load Noise Mask}. Een bestandsdialoog
+zal verschijnen. Kies het correcte masker voor de afbeelding. Indien dit
+correct is gedaan, zal de knop groen oplichten en het masker over de afbeelding
+getekend worden. 
+
+De volgende stap is het selecteren van het gebied waarin de reparatie moet
+plaatsvinden. Klik hiervoor op de knop \textbf{Mark Repair}. Trek vervolgens
+een rechthoek over het gebied met de kras. Indien dit correct is gedaan, zal de
+knop wederom groen oplichten.
+
+Ten slotte moet er ook een gebied worden aangeduid dat krasvrij is. Dit gebied
+moet, om de beste resultaten te leveren, visueel overeenkomstig zijn met het
+gebied van de kras in. Klik op de knop \textbf{Mark Sample}, en duid vervolgens
+de linkerbovenhoek aan van het krasvrije gebied. Het programma zal automatisch
+een gebied ter grote van het gemarkeerde krasgebied nemen. Als deze stap ook
+correct is uitgevoerd, zal deze knop ook groen oplichten.
+
+Nadat alle parameters ingegeven zijn, kan het algoritme gestart worden.
+Hierbij kan de keuze gemaakt worden tussen de drie ge\"implementeerde
+algoritmen. Er zijn twee knoppen beschikbaar, de eerste, 
+\textbf{Run Algorithm 1/2} draait het eerste dan wel het tweede algoritme
+naargelang het gebruikte masker monochroom of met zachte randen was. De tweede
+knop, \textbf{Run Algorithm 3}, draait het derde algoritme, wat betere
+resultaten kan leveren bij afbeeldingen waar er een groot contrast in
+intensiteit is tussen de repair- en samplegebieden.
+
+Bij het drukken op de knop zal \'e\'en iteratie van het algoritme uitgevoerd
+worden. De gebruiker kan zoveel iteraties uitvoeren als gewenst zijn. Na 10 tot
+20 iteraties zou de kras zo goed als hersteld moeten zijn.
+
+Voor afbeeldingen met meer dan een kras, herhaal deze stappen zo veel als
+nodig. Het is niet noodzakelijk om verschillende maskers te gebruiken voor
+verschillende krassen, het programma detecteert automatisch de juiste kras via
+de selectie van de gebruiker.
+
+Wanneer alle krassen naar wens verwijderd zijn, kan de resulterende afbeelding
+terug weggeschreven worden (\textbf{File} $\to$ \textbf{Save Image}).
+
+\section{Conclusie}
+  
+\end{document}
+
+% vim: spelllang=nl,en

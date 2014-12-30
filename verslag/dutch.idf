@@ -1,0 +1,207 @@
+% \subsection{Language definition file dutch.idf}
+% \changes{2.26}{2005/03/10}{Force year in four digits for long formats}%
+%
+% \begin{macro}{\iso@languageloaded}
+% Define the command \verb|\iso@languageloaded| in order to enable
+% \verb|isodate.sty| to determine if at least one language is loaded.
+%    \begin{macrocode}
+%<*dutch>
+\let\iso@languageloaded\active
+\typeout{Define commands for dutch date format}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\month@dutch}
+% Prints the name of today's month in the long form for the original
+% date format.
+%    \begin{macrocode}
+\def\month@dutch{\ifcase\month\or
+    januari\or februari\or maart\or april\or mei\or juni\or
+    juli\or augustus\or september\or oktober\or november\or december\fi}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\iso@printmonthday@dutch}
+% Prints the month and the day given as two arguments
+% (\verb|{mm}{dd}|) in the current date format.
+%    \begin{macrocode}
+\def\iso@printmonthday@dutch#1#2{%
+  \ifthenelse{\equal{\iso@dateformat}{iso}\OR
+              \equal{\iso@dateformat}{TeX}}{%
+    \iso@printmonthday@int{#1}{#2}%
+  }{%
+%    \end{macrocode}
+% Numeric and short date format: \verb|dd/mm/|
+%    \begin{macrocode}
+    \ifthenelse{\equal{\iso@dateformat}{numeric}\OR
+                \equal{\iso@dateformat}{short}}{%
+      \ifiso@doprintday
+        \iso@printday{#2}/%
+      \fi
+      \iso@printmonth{#1}%
+    }{%
+%    \end{macrocode}
+% Original date format: \verb|d. mmm|
+%    \begin{macrocode}
+      \ifthenelse{\equal{\iso@dateformat}{orig}\OR
+                  \equal{\iso@dateformat}{shortorig}}{%
+        \ifiso@doprintday
+          \iso@printday{#2}.\iso@monthsep
+        \fi
+        \begingroup
+        \edef\lmonth{#1}\def\month{\lmonth}%
+        \month@dutch%
+        \endgroup
+      }{}%
+    }%
+  }%
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\iso@printdate@dutch}
+% Prints the date given as three arguments (\verb|{yyyy}{mm}{dd}|) in
+% the actual date format
+%    \begin{macrocode}
+\def\iso@printdate@dutch#1#2#3{%
+%    \end{macrocode}
+% ISO or \LaTeX date format: \verb|yyyy\iso@printmonthday@dutch|
+%    \begin{macrocode}
+  \ifthenelse{\equal{\iso@dateformat}{iso}\OR
+              \equal{\iso@dateformat}{TeX}}{%
+    \iso@printdate@int{#1}{#2}{#3}%
+  }{%
+    \iso@printmonthday@dutch{\number#2}{\number#3}%
+    \ifiso@printyear
+%    \end{macrocode}
+% ?????
+%    \begin{macrocode}
+      \ifthenelse{\equal{\iso@dateformat}{orig}\OR
+                  \equal{\iso@dateformat}{shortorig}}{%
+      }{%
+        /%
+      }%
+%    \end{macrocode}
+% numeric date format: \verb|\iso@printmonthday@dutch yyyy|
+%    \begin{macrocode}
+      \ifthenelse{\equal{\iso@dateformat}{numeric}}{%
+        \iso@yearfour{\number#1}%
+      }{%
+%    \end{macrocode}
+% original date format: \verb|\iso@printmonthday@dutch~yyyy|
+%    \begin{macrocode}
+        \ifthenelse{\equal{\iso@dateformat}{orig}}{%
+          \iso@yearsep\iso@yearfour{\number#1}%
+        }{%
+%    \end{macrocode}
+% short original date format: \verb|\iso@printmonthday@dutch~yy|
+%    \begin{macrocode}
+          \ifthenelse{\equal{\iso@dateformat}{shortorig}}{%
+            \iso@yearsep\iso@twodigitsign\iso@yeartwo{\number#1}%
+          }{%
+%    \end{macrocode}
+% short date format: \verb|\iso@printmonthday@dutch yy|
+%    \begin{macrocode}
+            \ifthenelse{\equal{\iso@dateformat}{short}}{%
+              \iso@yeartwo{\number#1}%
+            }{}%
+          }%
+        }%
+      }%
+    \fi
+  }%
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\iso@datedutch}
+% This command redefines the \cs{today} command to print in the
+% actual date format.
+%    \begin{macrocode}
+\def\iso@datedutch{%
+  \def\today{\iso@printdate@dutch{\year}{\month}{\day}}}%
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\iso@daterange@...}
+% Define date-range commands for dialects.
+%    \begin{macrocode}
+\expandafter\def\csname iso@daterange@\CurrentOption\endcsname{%
+  \iso@daterange@dutch}%
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\iso@daterange@dutch}
+% This command takes six arguments
+% (\verb|{yyyy1}{mm1}{dd1}{yyyy2}{mm2}{dd2}|) and prints the corrosponding
+% date range in the actual date format.
+%    \begin{macrocode}
+\def\iso@daterange@dutch#1#2#3#4#5#6{%
+%    \end{macrocode}
+% ISO or \LaTeX\ date format.
+%    \begin{macrocode}
+  \ifthenelse{\equal{\iso@dateformat}{iso}\OR
+              \equal{\iso@dateformat}{TeX}}{%
+%    \end{macrocode}
+% Call the appropriate international routine.
+%    \begin{macrocode}
+    \iso@daterange@int{#1}{#2}{#3}{#4}{#5}{#6}%
+  }{%
+%    \end{macrocode}
+% Numeric, short, or original date format.
+%
+% If year and month are equal, only print the day of the start date. If
+% only the year is equal, only print month and day of the start
+% date. Otherwise print the whole start date.
+%    \begin{macrocode}
+    \ifthenelse{\equal{\number#1}{\number#4}}{%
+      \ifthenelse{\equal{\number#2}{\number#5}}{%
+        \ifiso@doprintday
+          \ifthenelse{\equal{\iso@dateformat}{orig}\OR
+                      \equal{\iso@dateformat}{shortorig}}{%
+            \iso@printday{#3}.%
+          }{%
+            \iso@printday{#3}%
+          }%
+        \else
+          \iso@printmonthday@dutch{#2}{#3}%
+        \fi
+      }{%
+        \iso@printmonthday@dutch{#2}{#3}%
+      }%
+    }{%
+      \csname iso@printdate@\iso@languagename\endcsname{#1}{#2}{#3}%
+    }%
+%    \end{macrocode}
+% Print the end date.
+%    \begin{macrocode}
+    \iso@rangesign
+    \csname iso@printdate@\iso@languagename\endcsname{#4}{#5}{#6}%
+  }%
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\iso@rangesign@dutch}
+% Sets the word between start and end date in a date range to `~til~'.
+%    \begin{macrocode}
+\expandafter\def\csname iso@rangesign@\CurrentOption\endcsname{~til~}
+%    \end{macrocode}
+% \end{macro}
+% Define the language name that will the active language for isodate
+% if none of the packages babel.sty, german.sty, and ngerman.sty is
+% loaded and if this is the last language that is used for isodate.
+% If one of the above packages is used this definition will be
+% overridden by the command \verb|\languagename| that will always
+% return the current used language.
+%    \begin{macrocode}
+\def\iso@languagename{dutch}%
+%    \end{macrocode}
+% Redefine the command \verb|\datedutch| that is used by babel to
+% switch to the original dutch date format to enable the use of
+% different date formats.
+% This has to be done after the preamble in order to ensure to overwrite
+% the babel command.
+%    \begin{macrocode}
+\AtBeginDocument{%
+  \ifx\undefined\iso@datedutch\else
+    \def\datedutch{\iso@datedutch}%
+  \fi
+}
+%</dutch>
+%    \end{macrocode}
+
+% vim: ft=tex

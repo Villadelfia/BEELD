@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt]{article}
+\documentclass[a4paper,14pt]{extarticle}
 
 \usepackage[dutch]{babel}
 \usepackage[T1]{fontenc}
@@ -39,8 +39,35 @@ Het programma laat toe om krassen op afbeeldingen te verwijderen via een
 algoritme zoals beschreven in de paper van Hirani et al., 1996. In de paper
 worden drie varianten van het algoritme beschreven, gelabeld A1 tot A3. 
 
-\todo{}
-XXXX Alle drie geimplementeerd XXXX
+Deze algoritmen werken iteratief, waarbij de de uitvoer van de vorige iteratie
+opnieuw wordt gebruikt als invoer van de volgende. Hoe meer iteraties, hoe
+betere resultaten. Experimenteel is ondervonden dat 10 \`a 20 iteraties nodig
+zijn voor een correct resultaat.
+
+Het algoritme maakt gebruik van zowel spati\"ele als frequentieinformatie. Voor
+de reparatie zijn drie invoerwaarden nodig: een binair masker dat aangeeft waar
+de kras zelf, een rechthoekig gebied dat de kras volledig omvat, en een
+samplegebied, even groot als het krasgebied. Voor de eerste iteratie,
+vermenigvuldig het krasgebied met het masker. 
+
+Een iteratie bestaat uit de volgende stappen. Eerst, neem de
+Fourier-transformatie van het kras- en samplegebied. Daarna, vervang de
+magnitude van iedere waarde in de Fourier-getransformeerde door het minimum van
+tussen de twee gebieden (met als uitzondering de DC-waarde, die van het
+krasgebied wordt overgenomen). Daarna, doe de inverse Fourier-transformatie en
+vervang alle pixels die buiten het masker liggen door de oorspronkelijke pixels.
+
+Het tweede algoritme breidt hier op uit door zachte (niet-binaire) maskers toe
+te laten, waar bij de laatste stap het gewogen gemiddelde wordt genomen tussen
+de kras- en samplegebieden.
+
+Het derde algoritme verbetert dit door ook kras- en samplegebieden toe te laten
+met ongelijke lichtintensiteit. Het doet dit door eerst de afbeelding te
+splitsen in een high-pass en low-pass component door middel van een gaussiaanse
+filter, en dan de verdere stappen enkel toe te passen op het high-pass
+gedeelte, waarna op het einde de het low-pass gedeelte terug wordt toegevoegd.
+
+In ons project zijn alle drie deze algoritmen ge\"implementeerd.
 
 Om de grafische interface te voorzien werd er gebruik gemaakt van de ingebouwde
 gui design tool van MatLab. Deze interface laat de gebruiker toe om een
@@ -112,17 +139,26 @@ Wanneer alle krassen naar wens verwijderd zijn, kan de resulterende afbeelding
 terug weggeschreven worden (\textbf{File} $\to$ \textbf{Save Image}).
 
 \section{Conclusie}
-\todo{}
-XXXX Problemen met implementatie algoritmes beschrijven.
+
+Handmatig krassen verwijderen kost redelijk veel werk. Met het algoritme dat
+hier ge\"implementeerd kan dit grotendeels automatisch gebeuren. 
+
+De kwaliteit van de uitvoer van het algoritme hangt sterk af van de gekozen
+gebieden. Er moet zorg gedragen worden dat beide gebieden ongeveer dezelfde
+inhoud hebben. Alhoewel de uitvoer van het algoritme er globaal genomen goed
+uitziet en de structuur van de foto op een correcte wijze verder zet, moet voor
+praktische doeleinden er wel nog wat nabewerking moeten doen.
+
+Rekening houdende met de mogelijkheden en de resultaten, is het algoritme op
+zich eigenlijk niet bijzonder complex. De benodigde code is vrij kort en was
+eenvoudig te schrijven met behulp van de ingebouwde functies van MatLab.
 
 Bij het ontwerpen van de interface hebben we vooral problemen gehad met de
-bizarre manier waarop MatLab werkt, deze problemen waren echter makkelijk op te
+bizarre manier waarop MatLab werkt; deze problemen waren echter makkelijk op te
 lossen met wat raadplegen van de documentatie.
 
-Op deze kleine problemen na is dit project redelijk vlot ge\"implementeerd.
+Op deze kleine problemen na verliep het project relatief vlot.
 
-
-  
 \end{document}
 
 % vim: spelllang=nl,en
